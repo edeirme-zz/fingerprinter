@@ -10,6 +10,7 @@
     var fingerprintme2;
     var gl;
     var transfer_webgl = [];
+    var plugins = [];
     //Check for local Storage
     var hasLocalStorage = (function() {
       try {
@@ -45,7 +46,7 @@
                     productSub = navigator.productSub,
                     vendor = navigator.vendor,
                     navigator_platform = getNavigatorPlatform(),
-                    plugins = [],
+{#                    plugins = [],#}
                     appVersion = navigator.appVersion,
                     window_name = window.name,
         // Get all the languages of the user. returns an array
@@ -57,11 +58,11 @@
         // in case the flash is indeed active.
         //Need to check if user has flash activated.
 
-                    flashInfo = document.getElementById("OSData"),
-                    flash_Os = flashInfo.getOS(),
-                    flash_fonts = flashInfo.getFonts(),
-                    flash_resolution = flashInfo.getResolution(),
-                    flash_language = flashInfo.getLanguage(),
+                    flashInfo = "",
+                    flash_Os = "",
+                    flash_fonts = [],
+                    flash_resolution = [],
+                    flash_language = "",
                     addblockEnabled = getAdBlock(),
                     hasLiedLanguages = getHasLiedLanguages(),
                     hasLiedResolution = getHasLiedResolution(),
@@ -81,26 +82,45 @@
                 availableWidth = screen.availWidth;
             }
 
-        // Just get the important info
-        for (var i = 0; i < plugins_temp.length; i++) {
-            plugins.push({
-                name: plugins_temp[i].name,
-                filename: plugins_temp[i].filename,
-                description: plugins_temp[i].description
-            });
-        }
+            // Just get the important info
+            for (var i = 0; i < plugins_temp.length; i++) {
+                plugins.push({
+                    name: plugins_temp[i].name,
+                    filename: plugins_temp[i].filename,
+                    description: plugins_temp[i].description
+                });
+            }
 
-
-            startWebGL();
-            getWebGlElements(gl);
-            plugins = JSON.stringify(plugins);
-            flash_resolution = JSON.stringify(flash_resolution);
-            flash_fonts = JSON.stringify(flash_fonts);
-            languages = JSON.stringify(languages);
-            transfer_webgl = JSON.stringify(transfer_webgl);
             if (window_name === "" || window_name === "undefined"){
                 window_name = "New Tab";
             }
+            startWebGL();
+            getWebGlElements(gl);
+            //Seriliaze elements in order to send with $.post
+            plugins = JSON.stringify(plugins);
+            languages = JSON.stringify(languages);
+            transfer_webgl = JSON.stringify(transfer_webgl);
+
+            //Snippet received from https://github.com/DIVERSIFY-project/amiunique
+            if((plugins.indexOf("flash") > -1) || (plugins.indexOf("Flash") > -1)){
+                        var fl = document.getElementById("OSData");
+                        if(fl == null){
+                            flash_Os = flash_fonts = flash_resolution = flash_language = "Flash detected but blocked by an extension";
+                        } else if((typeof fl.getOS != "undefined") || (typeof flashAvailable == "boolean")) {
+                            flash_fonts = fl.getFonts();
+                            flash_resolution = fl.getResolution();
+                            flash_language = fl.getLanguage();
+                            flash_Os = fl.getOS();
+                        } else {
+                            flash_Os = flash_fonts = flash_resolution = flash_language = "Flash detected but not activated (click-to-play)";
+                        }
+            } else {
+                        flash_Os = flash_fonts = flash_resolution = flash_language = "Flash not detected";
+                    }
+
+            // Serialize element in order to send with $.post
+            flash_resolution = JSON.stringify(flash_resolution);
+            flash_fonts = JSON.stringify(flash_fonts);
             document.getElementById("fpbutton").remove();
 
 
