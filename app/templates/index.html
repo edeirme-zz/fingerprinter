@@ -1,4 +1,33 @@
-<title>Hello from Flask</title>
+<title>Browser Fingerprint Sampler</title>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+
+
+
+<!-- Bootstrap Core CSS -->
+<link href="static/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Custom CSS -->
+<link href="static/css/grayscale.css" rel="stylesheet">
+
+<!-- Custom Fonts -->
+<link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
 {#<script type="text/javascript" src="{{ url_for('static', filename='fingerprint.js') }}"></script>#}
 <script type="text/javascript" src="{{
         url_for('static', filename='jquery-1.11.3.min.js') }}"></script>
@@ -7,56 +36,10 @@
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
 <script language="JavaScript"type="text/javascript">
-    var fingerprintme2,
-            gl,
-            transfer_webgl = [],
-            plugins = [],
-            permissions = [],
-
-    // Start by gathering  basic, navigator info
-            userAgent = navigator.userAgent,
-            plugins_temp = navigator.plugins,
-            date = new Date(),
-            localeStringDate = date.toLocaleString(),
-            timezone = date.getTimezoneOffset(),
-            screenheight = screen.height,
-            screenwidth = screen.width,
-            screendepth = screen.colorDepth,
-            cookieEnabled = navigator.cookieEnabled,
-            productSub = navigator.productSub,
-            vendor = navigator.vendor,
-            navigator_platform = getNavigatorPlatform(),
-            appVersion = navigator.appVersion,
-            window_name = window.name,
-// Get all the languages of the user. returns an array
-
-
-            languages = navigator.languages,
-            language = navigator.language,
-            hardwareConcurrency = navigator.hardwareConcurrency,
-            doNotTrack = "",
-// Get the flash element which should contain a lot of info
-// in case the flash is indeed active.
-//Need to check if user has flash activated.
-            flashInfo = "",
-            flash_Os = "",
-            flash_fonts = [],
-            flash_resolution = [],
-            flash_language = "",
-            addblockEnabled = "",
-            hasLiedLanguages = "",
-            hasLiedResolution = "",
-            webGlsupported = "",
-            canvasSupported = "",
-            availableHeight = "",
-            availableWidth = "",
-             // WebGL
-            webglFP = "",
-            canvasFP = "",
-            hasLiedOS = "",
-            maxTouchPoints = navigator.maxTouchPoints,
-            msMaxTouchPoints = navigator.msMaxTouchPoints,
-            hasLiedBrowser = "";
+    var fingerprintme2;
+    var gl;
+    var transfer_webgl = [];
+    var plugins = [];
     //Check for local Storage
     var hasLocalStorage = (function() {
       try {
@@ -81,18 +64,46 @@
 
     $(document).ready(function(){
         fingerprintme2 = function (){
+        // Start by gathering  basic, navigator info
+            var userAgent = navigator.userAgent,
+                    plugins_temp = navigator.plugins, date = new Date(),
+                    timezone = date.getTimezoneOffset(),
+                    screenheight = screen.height,
+                    screenwidth = screen.width,
+                    screendepth = screen.colorDepth,
+                    cookieEnabled = navigator.cookieEnabled,
+                    productSub = navigator.productSub,
+                    vendor = navigator.vendor,
+                    navigator_platform = getNavigatorPlatform(),
+{#                    plugins = [],#}
+                    appVersion = navigator.appVersion,
+                    window_name = window.name,
+        // Get all the languages of the user. returns an array
 
 
-            addblockEnabled = getAdBlock(),
-            hasLiedLanguages = getHasLiedLanguages(),
-            hasLiedResolution = getHasLiedResolution(),
-            webGlsupported = isWebGlSupported(),
-            canvasSupported = isCanvasSupported(),
-            webglFP = getWebglFp(),
-            doNotTrack = getDoNotTrack(),
-            canvasFP = getCanvasFp(),
-            hasLiedOS = getHasLiedOs(),
-            hasLiedBrowser = getHasLiedBrowser();
+                    languages = navigator.languages,
+                    doNotTrack = getDoNotTrack(),
+        // Get the flash element which should contain a lot of info
+        // in case the flash is indeed active.
+        //Need to check if user has flash activated.
+
+                    flashInfo = "",
+                    flash_Os = "",
+                    flash_fonts = [],
+                    flash_resolution = [],
+                    flash_language = "",
+                    addblockEnabled = getAdBlock(),
+                    hasLiedLanguages = getHasLiedLanguages(),
+                    hasLiedResolution = getHasLiedResolution(),
+                    webGlsupported = isWebGlSupported(),
+                    canvasSupported = isCanvasSupported(),
+                    availableHeight = "",
+                    availableWidth = "",
+                     // WebGL
+                    webglFP = getWebglFp(),
+                    canvasFP = getCanvasFp(),
+                    hasLiedOS = getHasLiedOs(),
+                    hasLiedBrowser = getHasLiedBrowser();
 
 
             if (screen.availHeight && screen.availWidth){
@@ -110,11 +121,10 @@
             }
 
             if (window_name === "" || window_name === "undefined"){
-                window_name = "No name set";
+                window_name = "New Tab";
             }
             startWebGL();
             getWebGlElements(gl);
-
             //Seriliaze elements in order to send with $.post
             plugins = JSON.stringify(plugins);
             languages = JSON.stringify(languages);
@@ -142,26 +152,8 @@
             flash_fonts = JSON.stringify(flash_fonts);
             document.getElementById("fpbutton").remove();
 
-            getGrantedPermissions();
 
-{#            getGrantedPermissions()#}
-{#                    .then(makeAjaxCall());#}
-
-
-
-
-    }
-
-
-
-    })
-
-    function makeAjaxCall(){
-{#        permissions = JSON.stringify(permissions);#}
-{#        console.log(permissions);#}
-        var permissions_final = JSON.stringify(permissions);
-{#        console.log(permissions2);#}
-        // Ajax call
+            // Ajax call
             $.post($SCRIPT_ROOT + '/fingerprint', {
                 userAgent: userAgent,
                 timezone: timezone,
@@ -194,17 +186,18 @@
                 hasSessionStorage: hasSessionStorage,
                 transfer_webgl: transfer_webgl,
                 hasLiedOS: hasLiedOS,
-                hasLiedBrowser: hasLiedBrowser,
-                language: language,
-                localeStringDate: localeStringDate,
-                maxTouchPoints: maxTouchPoints,
-                msMaxTouchPoints: msMaxTouchPoints,
-                permissions: permissions_final,
-                hardwareConcurrency: hardwareConcurrency,
+                hasLiedBrowser: hasLiedBrowser
               }, function(data, status) {
                 $("#result").text(data.result);
               }, "json");
+
+
     }
+
+
+
+    })
+
     function startWebGL() {
       var canvas = document.createElement("canvas");
 
@@ -227,7 +220,7 @@
       try {
         // Try to grab the standard context. If it fails, fallback to experimental.
         gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-{#        console.log(gl.getSupportedExtensions());#}
+        console.log(gl.getSupportedExtensions());
       }
       catch(e) {}
 
@@ -643,64 +636,164 @@
       return false;
     }
 
-    function getGrantedPermissions(){
-        if (!navigator
-        || !navigator.permissions
-        || navigator.permissions == 'undefined'
-        || !navigator.permissions.query
-        || navigator.permissions.query == 'undefined') {
-            return
-        }
-        navigator.permissions.query({name:"geolocation", userVisibleOnly:'false'})
-                .then(function(result){
-                    injectPermission(result, "geolocation", 1);
-                    navigator.permissions.query({name:"midi", userVisibleOnly:'false'})
-                            .then(function (result) {
-                                injectPermission(result, "midi", 0);
-                                navigator.permissions.query({name:"notifications", userVisibleOnly:'false'})
-                                        .then(function (result) {
-                                            injectPermission(result, "notifications", 0);
-                                            navigator.permissions.query({name:"push", userVisibleOnly:'false'})
-                                                    .then(function(result) {
-                                                        injectPermission(result, "push", 0);
-                                                        makeAjaxCall();
-                                                    })
-                                        })
-                            })
-                });
-    }
-    var obj = {};
-    function injectPermission(result, key, push_obj){
-        if (result.state == 'granted'){
-            obj[key] = 'granted';
-       } else if (result.state == 'prompt'){
-            obj[key] = 'prompt';
-       } else if (result.state == 'denied'){
-           obj[key] = 'denied';
-       } else {
-           obj[key] = result.state;
-       }
-        if(push_obj ) permissions.push(obj);
-    }
-
 </script>
 
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
 
-{% if name %}
-  <h1>Hello {{ name }}!</h1>
-{% else %}
-  <h1>Hello World!</h1>
-{% endif %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">
+                    <i class="fa fa-play-circle"></i>  <span class="light">Browser</span>  Fingerprint
+                    <span class="light">Sampler</span>
+                </a>
+            </div>
 
-<input id="fpbutton" type="button" value="Fingerprint Me!" onclick="fingerprintme2()">
-<div id="OSData" style="visibility: hidden"></div>
- <script language="JavaScript" type="text/javascript">
-    var el = document.getElementById("OSData");
-    swfobject.embedSWF("static/OSData.swf", el, 300, 120, 10);
-  </script>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">About</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#download">Download</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Intro Header -->
+    <header class="intro">
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <h2 class="brand-heading">Browser Fingerprint Sampler</h2>
+                        <p class="intro-text">Help us <strong>collect</strong> data!</p>
+                        <p>
+                          <input id="fpbutton" type="button" value="Fingerprint Me!" class="btn btn-lg btn-default" onclick="fingerprintme2()">
+                          <div id="OSData"></div>
+                           <script language="JavaScript" type="text/javascript">
+                              var el = document.getElementById("OSData");
+                              swfobject.embedSWF("static/OSData.swf", el, 300, 120, 10);
+                            </script>
+                             <span id=result></span>
+                        </p>
+                        <a href="#about" class="btn btn-circle page-scroll">
+                            <i class="fa fa-angle-double-down animated"></i>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>About the project</h2>
+                <p>Many websites are currently performing user profiling through various techniques which recently have become very sophisticated. Actually, these techniques enable them to perform browser or even device fingerprinting.</p>
+                <p>The goal of this service is to collect similar data in order to better understand how they work and how they can be countered. Your contribution to the project is minimal in terms of time and resources, but very valuable. Just click on the button below to provide us with your data.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="content-section text-center">
+        <div class="download-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h2>Download the code</h2>
+                    <p><a href="https://github.com/edeirme/fingerprinter" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+              <h2>Resources</h2>
+              https://github.com/DIVERSIFY-project/amiunique fingerprintjs2 https://github.com/Valve/fingerprintjs2/blob/master/fingerprint2.js detect <h3>Browser Support of Canvas Blending</h3>
+              <ul>
+                <li>http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/</li>
+                <li>https://github.com/Modernizr/Modernizr/blob/master/feature-detects/canvas/blending.js</li>
+                <li>https://securehomes.esat.kuleuven.be/~gacar/persistent/the_web_never_forgets.pdf</li>
+              </ul>
+
+              <h3>Detect Browser Support of Canvas Winding</h3>
+              <ul>
+                <li>http://blogs.adobe.com/webplatform/2013/01/30/winding-rules-in-canvas/</li>
+                <li>https://github.com/Modernizr/Modernizr/blob/master/feature-detects/canvas/winding.js</li>
+              </ul>
+
+              <h3>Canvas Blending</h3>
+              <ul>
+                <li>http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/</li>
+                <li>http://jsfiddle.net/NDYV8/16/</li>
+              </ul>
+
+              <h3>Canvas Winding</h3>
+              <ul>
+                <li>http://blogs.adobe.com/webplatform/2013/01/30/winding-rules-in-canvas/</li>
+                <li>http://jsfiddle.net/NDYV8/19/</li>
+              </ul>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section id="resources" class="content-section text-center">
+        <div class="download-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+                  <h2>Contact us</h2>
+                  <p><a href="mailto:edeirme@gmail.com" class="btn btn-default btn-lg"><i class="fa fa-envelope fa-fw"></i> <span class="network-name">Evangelos Deirmentzoglou</span></a>
+                    <a href="mailto:kpatsak@gmail.com" class="btn btn-default btn-lg"><i class="fa fa-envelope fa-fw"></i> <span class="network-name">Constantinos Patsakis</span></a>
+                  </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
 
-   <span id=result>?</span>
 
 
+   <!-- Footer -->
+   <footer>
+       <div class="container text-center">
+           <p>Copyleft &copy; 2015</p>
+       </div>
+   </footer>
 
+   <!-- jQuery -->
+   <script src="static/js/jquery.js"></script>
+
+   <!-- Bootstrap Core JavaScript -->
+   <script src="static/js/bootstrap.min.js"></script>
+
+
+   <!-- Plugin JavaScript -->
+   <script src="static/js/jquery.easing.min.js"></script>
+   <!-- Custom Theme JavaScript -->
+   <script src="static/js/grayscale.js"></script>
+
+</body>
