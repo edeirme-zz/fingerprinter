@@ -1,3 +1,3 @@
 __author__ = 'deirme'
 from app import app
-app.run(debug=True)
+app.run(debug=False)
