@@ -9,6 +9,7 @@ def hello_world():
 
 @app.route('/fingerprint', methods=['POST'])
 def add_numbers():
+    print(request.form.get('permissions'))
     fp = Fingeprint(
         userAgent=request.form.get('userAgent'),
         timezone=request.form.get('timezone'),
@@ -42,6 +43,13 @@ def add_numbers():
         hasLiedOS=request.form.get('hasLiedOS'),
         hasLiedBrowser=request.form.get('hasLiedBrowser'),
         transfer_webgl=request.form.get('transfer_webgl'),
+        permissions=request.form.get('permissions'),
+        language=request.form.get('language'),
+        localeStringDate=request.form.get('localeStringDate'),
+        maxTouchPoints=request.form.get('maxTouchPoints'),
+        msMaxTouchPoints=request.form.get('msMaxTouchPoints'),
+        hardwareConcurrency=request.form.get('hardwareConcurrency'),
+
     )
     db.session.add(fp)
     db.session.commit()

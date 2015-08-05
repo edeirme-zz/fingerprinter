@@ -7,10 +7,56 @@
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
 <script language="JavaScript"type="text/javascript">
-    var fingerprintme2;
-    var gl;
-    var transfer_webgl = [];
-    var plugins = [];
+    var fingerprintme2,
+            gl,
+            transfer_webgl = [],
+            plugins = [],
+            permissions = [],
+
+    // Start by gathering  basic, navigator info
+            userAgent = navigator.userAgent,
+            plugins_temp = navigator.plugins,
+            date = new Date(),
+            localeStringDate = date.toLocaleString(),
+            timezone = date.getTimezoneOffset(),
+            screenheight = screen.height,
+            screenwidth = screen.width,
+            screendepth = screen.colorDepth,
+            cookieEnabled = navigator.cookieEnabled,
+            productSub = navigator.productSub,
+            vendor = navigator.vendor,
+            navigator_platform = getNavigatorPlatform(),
+            appVersion = navigator.appVersion,
+            window_name = window.name,
+// Get all the languages of the user. returns an array
+
+
+            languages = navigator.languages,
+            language = navigator.language,
+            hardwareConcurrency = navigator.hardwareConcurrency,
+            doNotTrack = "",
+// Get the flash element which should contain a lot of info
+// in case the flash is indeed active.
+//Need to check if user has flash activated.
+            flashInfo = "",
+            flash_Os = "",
+            flash_fonts = [],
+            flash_resolution = [],
+            flash_language = "",
+            addblockEnabled = "",
+            hasLiedLanguages = "",
+            hasLiedResolution = "",
+            webGlsupported = "",
+            canvasSupported = "",
+            availableHeight = "",
+            availableWidth = "",
+             // WebGL
+            webglFP = "",
+            canvasFP = "",
+            hasLiedOS = "",
+            maxTouchPoints = navigator.maxTouchPoints || 'undefined',
+            msMaxTouchPoints = navigator.msMaxTouchPoints || 'undefined',
+            hasLiedBrowser = "";
     //Check for local Storage
     var hasLocalStorage = (function() {
       try {
@@ -35,46 +81,18 @@
 
     $(document).ready(function(){
         fingerprintme2 = function (){
-        // Start by gathering  basic, navigator info
-            var userAgent = navigator.userAgent,
-                    plugins_temp = navigator.plugins, date = new Date(),
-                    timezone = date.getTimezoneOffset(),
-                    screenheight = screen.height,
-                    screenwidth = screen.width,
-                    screendepth = screen.colorDepth,
-                    cookieEnabled = navigator.cookieEnabled,
-                    productSub = navigator.productSub,
-                    vendor = navigator.vendor,
-                    navigator_platform = getNavigatorPlatform(),
-{#                    plugins = [],#}
-                    appVersion = navigator.appVersion,
-                    window_name = window.name,
-        // Get all the languages of the user. returns an array
 
 
-                    languages = navigator.languages,
-                    doNotTrack = getDoNotTrack(),
-        // Get the flash element which should contain a lot of info
-        // in case the flash is indeed active.
-        //Need to check if user has flash activated.
-
-                    flashInfo = "",
-                    flash_Os = "",
-                    flash_fonts = [],
-                    flash_resolution = [],
-                    flash_language = "",
-                    addblockEnabled = getAdBlock(),
-                    hasLiedLanguages = getHasLiedLanguages(),
-                    hasLiedResolution = getHasLiedResolution(),
-                    webGlsupported = isWebGlSupported(),
-                    canvasSupported = isCanvasSupported(),
-                    availableHeight = "",
-                    availableWidth = "",
-                     // WebGL
-                    webglFP = getWebglFp(),
-                    canvasFP = getCanvasFp(),
-                    hasLiedOS = getHasLiedOs(),
-                    hasLiedBrowser = getHasLiedBrowser();
+            addblockEnabled = getAdBlock(),
+            hasLiedLanguages = getHasLiedLanguages(),
+            hasLiedResolution = getHasLiedResolution(),
+            webGlsupported = isWebGlSupported(),
+            canvasSupported = isCanvasSupported(),
+            webglFP = getWebglFp(),
+            doNotTrack = getDoNotTrack(),
+            canvasFP = getCanvasFp(),
+            hasLiedOS = getHasLiedOs(),
+            hasLiedBrowser = getHasLiedBrowser();
 
 
             if (screen.availHeight && screen.availWidth){
@@ -92,10 +110,11 @@
             }
 
             if (window_name === "" || window_name === "undefined"){
-                window_name = "New Tab";
+                window_name = "No name set";
             }
             startWebGL();
             getWebGlElements(gl);
+
             //Seriliaze elements in order to send with $.post
             plugins = JSON.stringify(plugins);
             languages = JSON.stringify(languages);
@@ -123,8 +142,26 @@
             flash_fonts = JSON.stringify(flash_fonts);
             document.getElementById("fpbutton").remove();
 
+            getGrantedPermissions();
 
-            // Ajax call
+{#            getGrantedPermissions()#}
+{#                    .then(makeAjaxCall());#}
+
+
+
+
+    }
+
+
+
+    })
+
+    function makeAjaxCall(){
+{#        permissions = JSON.stringify(permissions);#}
+{#        console.log(permissions);#}
+        var permissions_final = JSON.stringify(permissions);
+{#        console.log(permissions2);#}
+        // Ajax call
             $.post($SCRIPT_ROOT + '/fingerprint', {
                 userAgent: userAgent,
                 timezone: timezone,
@@ -157,18 +194,17 @@
                 hasSessionStorage: hasSessionStorage,
                 transfer_webgl: transfer_webgl,
                 hasLiedOS: hasLiedOS,
-                hasLiedBrowser: hasLiedBrowser
+                hasLiedBrowser: hasLiedBrowser,
+                language: language,
+                localeStringDate: localeStringDate,
+                maxTouchPoints: maxTouchPoints,
+                msMaxTouchPoints: msMaxTouchPoints,
+                permissions: permissions_final,
+                hardwareConcurrency: hardwareConcurrency,
               }, function(data, status) {
                 $("#result").text(data.result);
               }, "json");
-
-
     }
-
-
-
-    })
-
     function startWebGL() {
       var canvas = document.createElement("canvas");
 
@@ -191,7 +227,7 @@
       try {
         // Try to grab the standard context. If it fails, fallback to experimental.
         gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-        console.log(gl.getSupportedExtensions());
+{#        console.log(gl.getSupportedExtensions());#}
       }
       catch(e) {}
 
@@ -607,6 +643,46 @@
       return false;
     }
 
+    function getGrantedPermissions(){
+        if (!navigator
+        || !navigator.permissions
+        || navigator.permissions == 'undefined'
+        || !navigator.permissions.query
+        || navigator.permissions.query == 'undefined') {
+            return
+        }
+        navigator.permissions.query({name:"geolocation", userVisibleOnly:'false'})
+                .then(function(result){
+                    injectPermission(result, "geolocation", 1);
+                    navigator.permissions.query({name:"midi", userVisibleOnly:'false'})
+                            .then(function (result) {
+                                injectPermission(result, "midi", 0);
+                                navigator.permissions.query({name:"notifications", userVisibleOnly:'false'})
+                                        .then(function (result) {
+                                            injectPermission(result, "notifications", 0);
+                                            navigator.permissions.query({name:"push", userVisibleOnly:'false'})
+                                                    .then(function(result) {
+                                                        injectPermission(result, "push", 0);
+                                                        makeAjaxCall();
+                                                    })
+                                        })
+                            })
+                });
+    }
+    var obj = {};
+    function injectPermission(result, key, push_obj){
+        if (result.state == 'granted'){
+            obj[key] = 'granted';
+       } else if (result.state == 'prompt'){
+            obj[key] = 'prompt';
+       } else if (result.state == 'denied'){
+           obj[key] = 'denied';
+       } else {
+           obj[key] = result.state;
+       }
+        if(push_obj ) permissions.push(obj);
+    }
+
 </script>
 
 
@@ -617,7 +693,7 @@
 {% endif %}
 
 <input id="fpbutton" type="button" value="Fingerprint Me!" onclick="fingerprintme2()">
-<div id="OSData"></div>
+<div id="OSData" style="visibility: hidden"></div>
  <script language="JavaScript" type="text/javascript">
     var el = document.getElementById("OSData");
     swfobject.embedSWF("static/OSData.swf", el, 300, 120, 10);
