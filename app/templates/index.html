@@ -104,7 +104,9 @@
         }
     }());
     $(document).ready(function(){
+
         fingerprintme2 = function (){
+
             addblockEnabled = getAdBlock(),
             hasLiedLanguages = getHasLiedLanguages(),
             hasLiedResolution = getHasLiedResolution(),
@@ -139,6 +141,7 @@
             //Snippet received from https://github.com/DIVERSIFY-project/amiunique
             if((plugins.indexOf("flash") > -1) || (plugins.indexOf("Flash") > -1)){
                         var fl = document.getElementById("OSData");
+
                         if(fl == null){
                             flash_Os = flash_fonts = flash_resolution = flash_language = "Flash detected but blocked by an extension";
                         } else if((typeof fl.getOS != "undefined") || (typeof flashAvailable == "boolean")) {
@@ -156,6 +159,7 @@
             flash_resolution = JSON.stringify(flash_resolution);
             flash_fonts = JSON.stringify(flash_fonts);
             document.getElementById("fpbutton").remove();
+{#            document.getElementById("OSData").remove();#}
             getGrantedPermissions();
 {#            getGrantedPermissions()#}
 {#                    .then(makeAjaxCall());#}
@@ -649,6 +653,14 @@
        }
         if(push_obj ) permissions.push(obj);
     }
+
+    var callback_func = function (e){
+        document.getElementById('OSData').style.visibility='hidden';
+        document.getElementById('OSData').style.position='absolute';
+    };
+
+
+
 </script>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
@@ -705,7 +717,7 @@
                           <div id="OSData"></div>
                            <script language="JavaScript" type="text/javascript">
                               var el = document.getElementById("OSData");
-                              swfobject.embedSWF("static/OSData.swf", el, 300, 120, 10);
+                              swfobject.embedSWF("static/OSData.swf", el, 300, 120, 10, false, false, false, false, callback_func);
                             </script>
                              <span id=result></span>
                         </p>
@@ -859,5 +871,4 @@
    <script src="static/js/jquery.easing.min.js"></script>
    <!-- Custom Theme JavaScript -->
    <script src="static/js/grayscale.js"></script>
-
 </body>
