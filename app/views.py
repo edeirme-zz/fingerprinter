@@ -33,18 +33,17 @@ def add_numbers():
         if (not cookie
             or len(cookie) != 256
             or not cookie.isalnum()):
-
             result = "Nope"
         else:
             if check_if_already_commited(request):
                 result = "You fingerprint has already been saved"
             else:
-                commit_to_database(request)
+                commit_to_database()
                 result = "Thank you"
     elif not input_is_cool:
         result = "Nope"
     else:
-        commit_to_database(request)
+        commit_to_database()
         result = "Thank you"
     return jsonify(result=result)
 
@@ -59,7 +58,7 @@ def check_if_already_commited(request_obj):
     return False
 
 
-def commit_to_database(request):
+def commit_to_database():
     time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     # Add the cookie and the server time to the database
     # so we can forbid/delete multiple fingerprints
@@ -114,45 +113,45 @@ def commit_to_database(request):
 # into the database. We don't want huge elements
 # especially if the element shouldn't be.
 def check_input_sanity(request_obj):
-    if (check_property(request_obj.cookies.get('supercookie'), 562)
-        and check_property(request_obj.form.get('userAgent'), 400)
-        and check_property(request_obj.form.get('timezone'), 400)
-        and check_property(request_obj.form.get('screenwidth'), 100)
-        and check_property(request_obj.form.get('screendepth'), 100)
-        and check_property(request_obj.form.get('screenheight'), 100)
-        and check_property(request_obj.form.get('cookieEnabled'), 100)
-        and check_property(request_obj.form.get('productSub'), 500)
-        and check_property(request_obj.form.get('vendor'), 500)
-        and check_property(request_obj.form.get('navigator_platform'), 500)
-        and check_property(request_obj.form.get('plugins'), 10000)
-        and check_property(request_obj.form.get('appVersion'), 1000)
-        and check_property(request_obj.form.get('window_name'), 4000)
-        and check_property(request_obj.form.get('languages'), 1000)
-        and check_property(request_obj.form.get('doNotTrack'), 100)
-        and check_property(request_obj.form.get('flash_Os'), 300)
-        and check_property(request_obj.form.get('flash_fonts'), 10000)
-        and check_property(request_obj.form.get('flash_resolution'), 300)
-        and check_property(request_obj.form.get('flash_language'), 300)
-        and check_property(request_obj.form.get('addblockEnabled'), 100)
-        and check_property(request_obj.form.get('hasLiedLanguages'), 100)
-        and check_property(request_obj.form.get('hasLiedResolution'), 100)
-        and check_property(request_obj.form.get('webGlsupported'), 100)
-        and check_property(request_obj.form.get('canvassupported'), 100)
-        and check_property(request_obj.form.get('availableWidth'), 100)
-        and check_property(request_obj.form.get('availableHeight'), 100)
-        and check_property(request_obj.form.get('webglFP'), 40000)
-        and check_property(request_obj.form.get('canvasFP'), 150000)
-        and check_property(request_obj.form.get('hasLocalStorage'), 100)
-        and check_property(request_obj.form.get('hasSessionStorage'), 100)
-        and check_property(request_obj.form.get('hasLiedOS'), 100)
-        and check_property(request_obj.form.get('hasLiedBrowser'), 100)
-        and check_property(request_obj.form.get('transfer_webgl'), 40000)
-        and check_property(request_obj.form.get('permissions'), 500)
-        and check_property(request_obj.form.get('language'), 300)
-        and check_property(request_obj.form.get('localeStringDate'), 300)
-        and check_property(request_obj.form.get('maxTouchPoints'), 300)
-        and check_property(request_obj.form.get('msMaxTouchPoints'), 300)
-        and check_property(request_obj.form.get('hardwareConcurrency'), 300)
+    if (check_property(request_obj.form.get('userAgent'), 300, 'userAgent')
+        and check_property(request_obj.cookies.get('supercookie'), 256, 'supercookie')
+        and check_property(request_obj.form.get('timezone'), 10, 'timezone')
+        and check_property(request_obj.form.get('screenwidth'), 10, 'screenwidth')
+        and check_property(request_obj.form.get('screendepth'), 10, 'screendepth')
+        and check_property(request_obj.form.get('screenheight'), 10, 'screenheight')
+        and check_property(request_obj.form.get('cookieEnabled'), 10, 'cookieEnabled')
+        and check_property(request_obj.form.get('productSub'), 100, 'productSub')
+        and check_property(request_obj.form.get('vendor'), 100, 'vendor')
+        and check_property(request_obj.form.get('navigator_platform'), 100, 'navigator_platform')
+        and check_property(request_obj.form.get('plugins'), 10000, 'plugins')
+        and check_property(request_obj.form.get('appVersion'), 1000, 'appVersion')
+        and check_property(request_obj.form.get('window_name'), 4000, 'window_name')
+        and check_property(request_obj.form.get('languages'), 100, 'languages')
+        and check_property(request_obj.form.get('doNotTrack'), 15, 'doNotTrack')
+        and check_property(request_obj.form.get('flash_Os'), 100, 'flash_Os')
+        and check_property(request_obj.form.get('flash_fonts'), 15000, 'flash_fonts')
+        and check_property(request_obj.form.get('flash_resolution'), 100, 'flash_resolution')
+        and check_property(request_obj.form.get('flash_language'), 100, 'flash_language')
+        and check_property(request_obj.form.get('addblockEnabled'), 10, 'addblockEnabled')
+        and check_property(request_obj.form.get('hasLiedLanguages'), 10, 'hasLiedLanguages')
+        and check_property(request_obj.form.get('hasLiedResolution'), 10, 'hasLiedResolution')
+        and check_property(request_obj.form.get('webGlsupported'), 10, 'webGlsupported')
+        and check_property(request_obj.form.get('canvassupported'), 10, 'canvassuported')
+        and check_property(request_obj.form.get('availableWidth'), 100, 'availableWidth')
+        and check_property(request_obj.form.get('availableHeight'), 100, 'availableHeight')
+        and check_property(request_obj.form.get('webglFP'), 40000, 'webglFP')
+        and check_property(request_obj.form.get('canvasFP'), 150000, 'canvasFP')
+        and check_property(request_obj.form.get('hasLocalStorage'), 10, 'hasLocalStorage')
+        and check_property(request_obj.form.get('hasSessionStorage'), 10, 'hasSessionStorage')
+        and check_property(request_obj.form.get('hasLiedOS'), 10, 'hasLiedOS')
+        and check_property(request_obj.form.get('hasLiedBrowser'), 100, 'hasLiedBrowser')
+        and check_property(request_obj.form.get('transfer_webgl'), 40000, 'transfer_webgl')
+        and check_property(request_obj.form.get('permissions'), 200, 'permissions')
+        and check_property(request_obj.form.get('language'), 100, 'language')
+        and check_property(request_obj.form.get('localeStringDate'), 200, 'localeStringDate')
+        and check_property(request_obj.form.get('maxTouchPoints'), 100, 'maxTouchPoints')
+        and check_property(request_obj.form.get('msMaxTouchPoints'), 100, 'msMaxTouchPoints')
+        and check_property(request_obj.form.get('hardwareConcurrency'), 100, 'hardwareConcurrency')
         ):
 
         return True
@@ -163,10 +162,15 @@ def check_input_sanity(request_obj):
 # Helper function to check the property length
 # Accepts two arguments, the property value and
 # the number of allowed bytes for that property
-def check_property(object_property, allowedBytes):
-    if sys.getsizeof(object_property) <= allowedBytes:
+def check_property(object_property, max_length, property_name):
+    # if sys.getsizeof(object_property) <= allowedBytes:
+
+    if len(str(object_property)) <= max_length:
         return True
-    print sys.getsizeof(object_property)
+    print "Object: " + property_name +\
+          " expected max length of: " + str(max_length)\
+          + " and received length of: " + str(len(str(object_property)))\
+          + " \nSession token for that value : " + request.cookies.get('supercookie')
     return False
 
 
