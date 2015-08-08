@@ -160,7 +160,17 @@
             flash_resolution = JSON.stringify(flash_resolution);
             flash_fonts = JSON.stringify(flash_fonts);
             document.getElementById("fpbutton").remove();
-            getGrantedPermissions();
+            var browser;
+            if(userAgent.toLowerCase().indexOf("chrome") >= 0)browser = "Chrome";
+
+            if (browser === "Chrome" && productSub === "20030107") {
+            //It's chrome go for permissions
+                getGrantedPermissions();
+            }
+            else {
+                //It's not chrome
+                makeAjaxCall();
+            }
     }
     })
     function makeAjaxCall(){
