@@ -63,46 +63,46 @@ def commit_to_database():
     # Add the cookie and the server time to the database
     # so we can forbid/delete multiple fingerprints
     fp = Fingeprint(
-        cookie=request.cookies.get('supercookie'),
-        server_time=time,
-        userAgent=request.form.get('userAgent'),
-        timezone=request.form.get('timezone'),
-        screenwidth=request.form.get('screenwidth'),
-        screendepth=request.form.get('screendepth'),
-        screenheight=request.form.get('screenheight'),
-        cookieEnabled=request.form.get('cookieEnabled'),
-        productSub=request.form.get('productSub'),
-        vendor=request.form.get('vendor'),
-        navigator_platform=request.form.get('navigator_platform'),
-        plugins=request.form.get('plugins'),
-        appVersion=request.form.get('appVersion'),
-        window_name=request.form.get('window_name'),
-        languages=request.form.get('languages'),
-        doNotTrack=request.form.get('doNotTrack'),
-        flash_Os=request.form.get('flash_Os'),
-        flash_fonts=request.form.get('flash_fonts'),
-        flash_resolution=request.form.get('flash_resolution'),
-        flash_language=request.form.get('flash_language'),
-        addblockEnabled=request.form.get('addblockEnabled'),
-        hasLiedLanguages=request.form.get('hasLiedLanguages'),
-        hasLiedResolution=request.form.get('hasLiedResolution'),
-        webGlsupported=request.form.get('webGlsupported'),
-        canvassupported=request.form.get('canvassupported'),
-        availableWidth=request.form.get('availableWidth'),
-        avaliableHeight=request.form.get('availableHeight'),
-        webglFP=request.form.get('webglFP'),
-        canvasFP=request.form.get('canvasFP'),
-        hasLocalStorage=request.form.get('hasLocalStorage'),
-        hasSessionStorage=request.form.get('hasSessionStorage'),
-        hasLiedOS=request.form.get('hasLiedOS'),
-        hasLiedBrowser=request.form.get('hasLiedBrowser'),
-        transfer_webgl=request.form.get('transfer_webgl'),
-        permissions=request.form.get('permissions'),
-        language=request.form.get('language'),
-        localeStringDate=request.form.get('localeStringDate'),
-        maxTouchPoints=request.form.get('maxTouchPoints'),
-        msMaxTouchPoints=request.form.get('msMaxTouchPoints'),
-        hardwareConcurrency=request.form.get('hardwareConcurrency'),
+        cookie=unicode(request.cookies.get('supercookie')),
+        server_time=unicode(time),
+        userAgent=unicode(request.form.get('userAgent')),
+        timezone=unicode(request.form.get('timezone')),
+        screenwidth=unicode(request.form.get('screenwidth')),
+        screendepth=unicode(request.form.get('screendepth')),
+        screenheight=unicode(request.form.get('screenheight')),
+        cookieEnabled=unicode(request.form.get('cookieEnabled')),
+        productSub=unicode(request.form.get('productSub')),
+        vendor=unicode(request.form.get('vendor')),
+        navigator_platform=unicode(request.form.get('navigator_platform')),
+        plugins=unicode(request.form.get('plugins')),
+        appVersion=unicode(request.form.get('appVersion')),
+        window_name=unicode(request.form.get('window_name')),
+        languages=unicode(request.form.get('languages')),
+        doNotTrack=unicode(request.form.get('doNotTrack')),
+        flash_Os=unicode(request.form.get('flash_Os')),
+        flash_fonts=unicode(request.form.get('flash_fonts')),
+        flash_resolution=unicode(request.form.get('flash_resolution')),
+        flash_language=unicode(request.form.get('flash_language')),
+        addblockEnabled=unicode(request.form.get('addblockEnabled')),
+        hasLiedLanguages=unicode(request.form.get('hasLiedLanguages')),
+        hasLiedResolution=unicode(request.form.get('hasLiedResolution')),
+        webGlsupported=unicode(request.form.get('webGlsupported')),
+        canvassupported=unicode(request.form.get('canvassupported')),
+        availableWidth=unicode(request.form.get('availableWidth')),
+        avaliableHeight=unicode(request.form.get('availableHeight')),
+        webglFP=unicode(request.form.get('webglFP')),
+        canvasFP=unicode(request.form.get('canvasFP')),
+        hasLocalStorage=unicode(request.form.get('hasLocalStorage')),
+        hasSessionStorage=unicode(request.form.get('hasSessionStorage')),
+        hasLiedOS=unicode(request.form.get('hasLiedOS')),
+        hasLiedBrowser=unicode(request.form.get('hasLiedBrowser')),
+        transfer_webgl=unicode(request.form.get('transfer_webgl')),
+        permissions=unicode(request.form.get('permissions')),
+        language=unicode(request.form.get('language')),
+        localeStringDate=unicode(request.form.get('localeStringDate')),
+        maxTouchPoints=unicode(request.form.get('maxTouchPoints')),
+        msMaxTouchPoints=unicode(request.form.get('msMaxTouchPoints')),
+        hardwareConcurrency=unicode(request.form.get('hardwareConcurrency')),
 
     )
     db.session.add(fp)
@@ -163,14 +163,14 @@ def check_input_sanity(request_obj):
 # Accepts two arguments, the property value and
 # the number of allowed bytes for that property
 def check_property(object_property, max_length, property_name):
-    # if sys.getsizeof(object_property) <= allowedBytes:
-
-    if len(str(object_property)) <= max_length:
-        return True
+    if object_property is None:
+       object_property = "NoneType"
+    if len(object_property.encode('utf8', 'replace'))<= max_length:
+       return True
     print "Object: " + property_name +\
-          " expected max length of: " + str(max_length)\
-          + " and received length of: " + str(len(str(object_property)))\
-          + " \nSession token for that value : " + request.cookies.get('supercookie')
+         " expected max length of: " + str(max_length)\
+         + " and received length of: " + str(len(unicode(str(object_property))))\
+         + " \nSession token for that value : " + unicode(request.cookies.get('supercookie'))
     return False
 
 
