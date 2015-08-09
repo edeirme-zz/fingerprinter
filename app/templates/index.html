@@ -159,7 +159,11 @@
             // Serialize element in order to send with $.post
             flash_resolution = JSON.stringify(flash_resolution);
             flash_fonts = JSON.stringify(flash_fonts);
-            document.getElementById("fpbutton").remove();
+            $('#fpbutton').remove();
+            $('#boom').addClass("glyphicon");
+            $('#boom').addClass("glyphicon-refresh");
+            $('#boom').addClass("spinning");
+
             var browser;
             if(userAgent.toLowerCase().indexOf("chrome") >= 0)browser = "Chrome";
 
@@ -216,6 +220,9 @@
                 permissions: permissions_final,
                 hardwareConcurrency: hardwareConcurrency,
               }, function(data, status) {
+                $("#boom").removeClass("spinning");
+                $("#boom").removeClass("glyphicon-refresh");
+                $("#boom").removeClass("glyphicon");
                 $("#result").text(data.result);
               }, "json");
     }
@@ -718,7 +725,7 @@
                     <div class="col-md-8 col-md-offset-2">
                         <h2 class="brand-heading">Browser Fingerprint Sampler</h2>
                         <p class="intro-text">Help us <strong>collect</strong> data!</p>
-                        <p>
+                        <p id="boom">
                           <input id="fpbutton" type="button" value="Fingerprint Me!" class="btn btn-lg btn-default" onclick="fingerprintme2()">
                           <div id="OSData"></div>
                            <script language="JavaScript" type="text/javascript">
@@ -737,6 +744,7 @@
         </div>
     </header>
 
+
     <!-- About Section -->
     <section id="about" class="container content-section text-center">
         <div class="row">
@@ -744,7 +752,7 @@
                 <h2>About the project</h2>
                 <p>Many websites are currently performing user profiling through various techniques which recently have become very sophisticated. Actually, these techniques enable them to perform browser or even device fingerprinting.</p>
                 <p>The goal of this service is to collect similar data in order to better understand how they work and how they can be <em>countered</em>. Your contribution to the project is minimal in terms of time and resources, but invaluable. Just click on the button above to provide us the data of your browser.</p>
-                <h3>How dows it work?</h3>
+                <h3>How does it work?</h3>
                 <p>All browsers have to conform to specific standards in order to render properly the webpages that you browse. However, there are many differences between them ranging from inherent; such as version and webkit, platform dependent; such as os version, to user dependent; such as fonts, languages etc. Collecting this data one can create a <em>fingerprint</em> for the browser to track and even profile the user.</p>
                 <p>The current webpage, <em>when</em> you decide to contribute and press the button, uses JavaScript and Flash (if installed) to collect such data from your browser and store it so that we can process it later.</p>
                 <h3>How can I contribute?</h3>
