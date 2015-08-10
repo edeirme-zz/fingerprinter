@@ -32,6 +32,8 @@
 {#<script type="text/javascript" src="{{ url_for('static', filename='fingerprint.js') }}"></script>#}
 <script type="text/javascript" src="{{
         url_for('static', filename='jquery-1.11.3.min.js') }}"></script>
+<script type="text/javascript" src="{{
+        url_for('static', filename='core-estimator.min.js') }}"></script>
 <script src="/static/swfobject.js" language="javascript"></script>
 <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
@@ -83,7 +85,8 @@
             hasLiedOS = "",
             maxTouchPoints = navigator.maxTouchPoints,
             msMaxTouchPoints = navigator.msMaxTouchPoints,
-            hasLiedBrowser = "";
+            hasLiedBrowser = "",
+            estimatedCores = "";
     //Check for local Storage
     var hasLocalStorage = (function() {
       try {
@@ -164,17 +167,27 @@
             $('#boom').addClass("glyphicon-refresh");
             $('#boom').addClass("spinning");
 
-            var browser;
-            if(userAgent.toLowerCase().indexOf("chrome") >= 0)browser = "Chrome";
+            //Get estimated cores
+            var options = {
+{#                progress: corelist.update.bind(corelist),#}
+                use_cache: false
+            };
+            navigator.getHardwareConcurrency(function() {
+                hardwareConcurrency = navigator.hardwareConcurrency;
+                var browser;
+                if(userAgent.toLowerCase().indexOf("chrome") >= 0)browser = "Chrome";
 
-            if (browser === "Chrome" && productSub === "20030107") {
-            //It's chrome go for permissions
-                getGrantedPermissions();
-            }
-            else {
-                //It's not chrome
-                makeAjaxCall();
-            }
+                if (browser === "Chrome" && productSub === "20030107") {
+                //It's chrome go for permissions
+                    getGrantedPermissions();
+                }
+                else {
+                    //It's not chrome
+                    makeAjaxCall();
+                }
+            }, options);
+
+
     }
     })
     function makeAjaxCall(){
