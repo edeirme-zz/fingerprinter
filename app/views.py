@@ -129,7 +129,7 @@ def check_input_sanity(request_obj):
         and check_property(request_obj.form.get('languages'), 100, 'languages')
         and check_property(request_obj.form.get('doNotTrack'), 15, 'doNotTrack')
         and check_property(request_obj.form.get('flash_Os'), 100, 'flash_Os')
-        and check_property(request_obj.form.get('flash_fonts'), 15000, 'flash_fonts')
+        and check_property(request_obj.form.get('flash_fonts'), 30000, 'flash_fonts')
         and check_property(request_obj.form.get('flash_resolution'), 100, 'flash_resolution')
         and check_property(request_obj.form.get('flash_language'), 100, 'flash_language')
         and check_property(request_obj.form.get('addblockEnabled'), 10, 'addblockEnabled')
