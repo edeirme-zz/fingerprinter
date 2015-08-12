@@ -116,9 +116,7 @@
             hasLiedResolution = getHasLiedResolution(),
             webGlsupported = isWebGlSupported(),
             canvasSupported = isCanvasSupported(),
-            webglFP = getWebglFp(),
             doNotTrack = getDoNotTrack(),
-            canvasFP = getCanvasFp(),
             hasLiedOS = getHasLiedOs(),
             hasLiedBrowser = getHasLiedBrowser();
             if (screen.availHeight && screen.availWidth){
@@ -136,8 +134,14 @@
             if (window_name === "" || window_name === "undefined"){
                 window_name = "No name set";
             }
-            startWebGL();
-            getWebGlElements(gl);
+            if (webGlsupported){
+                startWebGL();
+                getWebGlElements(gl);
+                webglFP = getWebglFp();
+            }
+            if (canvasSupported){
+                canvasFP = getCanvasFp();
+            }
             //Seriliaze elements in order to send with $.post
             plugins = JSON.stringify(plugins);
             languages = JSON.stringify(languages);
@@ -242,7 +246,7 @@
     function startWebGL() {
       var canvas = document.createElement("canvas");
       gl = initWebGL(canvas);      // Initialize the GL context
-      canvas = document.createElement("canvas");
+{#      canvas = document.createElement("canvas");#}
 {#      gl2 = initWebGL(canvas);#}
       // Only continue if WebGL is available and working
       if (gl) {
