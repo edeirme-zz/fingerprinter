@@ -86,7 +86,8 @@
             maxTouchPoints = navigator.maxTouchPoints,
             msMaxTouchPoints = navigator.msMaxTouchPoints,
             hasLiedBrowser = "",
-            estimatedCores = "";
+            estimatedCores = "",
+            browser = "";
     //Check for local Storage
     var hasLocalStorage = (function() {
       try {
@@ -185,10 +186,19 @@
 {#                progress: corelist.update.bind(corelist),#}
                 use_cache: false
             };
-            console.log("starting core calculator");
+
+
+            if(userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0"
+            || userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:31.0) Gecko/20100101 Firefox/31.0"){
+                if (!navigator.plugins && timezone == 0){
+                    makeAjaxCall();
+                }
+            }
+            else{
+                console.log("starting core calculator");
             navigator.getHardwareConcurrency(function() {
                 hardwareConcurrency = navigator.hardwareConcurrency;
-                var browser;
+{#                var browser;#}
                 console.log("Calculating approx. cores");
                 if(userAgent.toLowerCase().indexOf("chrome") >= 0)browser = "Chrome";
 
@@ -202,6 +212,8 @@
                     makeAjaxCall();
                 }
             }, options);
+            }
+
 
 
     }
