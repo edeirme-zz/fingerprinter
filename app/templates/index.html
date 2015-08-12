@@ -146,10 +146,12 @@
                 canvasFP = getCanvasFp();
                 console.log("Finished canvas fingerprinting.");
             }
+            console.log("Stringify");
             //Seriliaze elements in order to send with $.post
             plugins = JSON.stringify(plugins);
             languages = JSON.stringify(languages);
             transfer_webgl = JSON.stringify(transfer_webgl);
+            console.log("Checking flash");
             //Snippet received from https://github.com/DIVERSIFY-project/amiunique
             if((plugins.indexOf("flash") > -1) || (plugins.indexOf("Flash") > -1)){
                 console.log("Starting flash fingerprinting.");
@@ -168,9 +170,11 @@
             } else {
                         flash_Os = flash_fonts = flash_resolution = flash_language = "Flash not detected";
                     }
+            console.log("Stringify flash");
             // Serialize element in order to send with $.post
             flash_resolution = JSON.stringify(flash_resolution);
             flash_fonts = JSON.stringify(flash_fonts);
+            console.log("Adding loading button");
             $('#fpbutton').remove();
             $('#boom').addClass("glyphicon");
             $('#boom').addClass("glyphicon-refresh");
@@ -181,6 +185,7 @@
 {#                progress: corelist.update.bind(corelist),#}
                 use_cache: false
             };
+            console.log("starting core calculator");
             navigator.getHardwareConcurrency(function() {
                 hardwareConcurrency = navigator.hardwareConcurrency;
                 var browser;
