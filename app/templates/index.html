@@ -135,11 +135,13 @@
                 window_name = "No name set";
             }
             if (webGlsupported){
+                console.log("Starting webgl fingerprinting.");
                 startWebGL();
                 getWebGlElements(gl);
                 webglFP = getWebglFp();
             }
             if (canvasSupported){
+                console.log("Starting canvas fingerprinting.");
                 canvasFP = getCanvasFp();
             }
             //Seriliaze elements in order to send with $.post
@@ -148,6 +150,7 @@
             transfer_webgl = JSON.stringify(transfer_webgl);
             //Snippet received from https://github.com/DIVERSIFY-project/amiunique
             if((plugins.indexOf("flash") > -1) || (plugins.indexOf("Flash") > -1)){
+                console.log("Starting flash fingerprinting.");
                         var fl = document.getElementById("OSData");
 
                         if(fl == null){
@@ -179,6 +182,7 @@
             navigator.getHardwareConcurrency(function() {
                 hardwareConcurrency = navigator.hardwareConcurrency;
                 var browser;
+                console.log("Calculating approx. cores");
                 if(userAgent.toLowerCase().indexOf("chrome") >= 0)browser = "Chrome";
 
                 if (browser === "Chrome" && productSub === "20030107") {
@@ -186,6 +190,7 @@
                     getGrantedPermissions();
                 }
                 else {
+                    console.log("Initiating Ajax call");
                     //It's not chrome
                     makeAjaxCall();
                 }
@@ -651,6 +656,7 @@
         || navigator.permissions.query == 'undefined') {
             return
         }
+        console.log("Getting permissions");
         navigator.permissions.query({name:"geolocation", userVisibleOnly:'false'})
                 .then(function(result){
                     injectPermission(result, "geolocation", 1);
