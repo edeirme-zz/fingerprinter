@@ -39,30 +39,37 @@
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
 <script language="JavaScript"type="text/javascript">
+
+
+
+    console.log(supports_h264_baseline_video());
+    // Post Message supported is required to get Youtube API measurements.
+    var pm_is_supported = typeof(window.postMessage) == 'function';
+
     var fingerprintme2,
             gl,
             transfer_webgl = [],
             plugins = [],
             permissions = [],
     // Start by gathering  basic, navigator info
-            userAgent = navigator.userAgent,
-            plugins_temp = navigator.plugins,
+            userAgent = "",
+            plugins_temp = "",
             date = new Date(),
-            localeStringDate = date.toLocaleString(),
-            timezone = date.getTimezoneOffset(),
-            screenheight = screen.height,
-            screenwidth = screen.width,
-            screendepth = screen.colorDepth,
-            cookieEnabled = navigator.cookieEnabled,
-            productSub = navigator.productSub,
-            vendor = navigator.vendor,
-            navigator_platform = getNavigatorPlatform(),
-            appVersion = navigator.appVersion,
-            window_name = window.name,
+            localeStringDate = "",
+            timezone = "",
+            screenheight = "",
+            screenwidth = "",
+            screendepth = "",
+            cookieEnabled = "",
+            productSub = "",
+            vendor = "",
+            navigator_platform = "",
+            appVersion = "",
+            window_name = "",
 // Get all the languages of the user. returns an array
-            languages = navigator.languages,
-            language = navigator.language,
-            hardwareConcurrency = navigator.hardwareConcurrency,
+            languages = "",
+            language = "",
+            hardwareConcurrency = "",
             doNotTrack = "",
 // Get the flash element which should contain a lot of info
 // in case the flash is indeed active.
@@ -83,34 +90,73 @@
             webglFP = "",
             canvasFP = "",
             hasLiedOS = "",
-            maxTouchPoints = navigator.maxTouchPoints,
-            msMaxTouchPoints = navigator.msMaxTouchPoints,
+            maxTouchPoints = "",
+            msMaxTouchPoints = "",
             hasLiedBrowser = "",
             estimatedCores = "",
-            browser = "";
-    //Check for local Storage
-    var hasLocalStorage = (function() {
-      try {
-        localStorage.setItem("foo", "bar");
-        localStorage.removeItem("foo");
-        return true;
-      } catch (exception) {
-          console.log(exception)
-        return false;
-      }
-    }());
-    var hasSessionStorage = (function() {
-        try {
-            window.sessionStorage.setItem("foo", "bar");
-            window.sessionStorage.removeItem("foo");
-            return true;
-        } catch (exception) {
-            return false;
-        }
-    }());
-    $(document).ready(function(){
+            browser = "",
+            playbackQuality = "",
+            playerVolume = "",
+            hasLocalStorage = "",
+            hasSessionStorage = "";
 
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+    var player;
+
+
+
+    $(document).ready(function(){
         fingerprintme2 = function (){
+
+            userAgent = navigator.userAgent;
+            plugins_temp = navigator.plugins;
+            localeStringDate = date.toLocaleString();
+            timezone = date.getTimezoneOffset();
+            screenheight = screen.height;
+            screenwidth = screen.width;
+            screendepth = screen.colorDepth;
+            cookieEnabled = navigator.cookieEnabled;
+            productSub = navigator.productSub;
+            vendor = navigator.vendor;
+            navigator_platform = getNavigatorPlatform();
+            appVersion = navigator.appVersion;
+            window_name = window.name;
+            languages = navigator.languages;
+            language = navigator.language;
+            hardwareConcurrency = navigator.hardwareConcurrency;
+            maxTouchPoints = navigator.maxTouchPoints;
+            msMaxTouchPoints = navigator.msMaxTouchPoints;
+
+            //Check for local Storage
+            hasLocalStorage = (function() {
+              try {
+                localStorage.setItem("foo", "bar");
+                localStorage.removeItem("foo");
+                return true;
+              } catch (exception) {
+                  console.log(exception)
+                return false;
+              }
+            }());
+            hasSessionStorage = (function() {
+                try {
+                    window.sessionStorage.setItem("foo", "bar");
+                    window.sessionStorage.removeItem("foo");
+                    return true;
+                } catch (exception) {
+                    return false;
+                }
+            }());
+
+
+
+
 
             addblockEnabled = getAdBlock(),
             hasLiedLanguages = getHasLiedLanguages(),
@@ -182,44 +228,105 @@
             $('#boom').addClass("spinning");
 
             //Get estimated cores
-            var options = {
+
+            if(userAgent.toLowerCase().indexOf("trident") >= 0)
+            {browser = "Internet Explorer";}
+
+            var tempRes = eval.toString().length;
+{#            if(tempRes === 39 && browser !== "Internet Explorer" && browser !== "Other"){#}
+
+            var checkExist = setInterval(function() {
+                if (tempRes === 39 && browser === "Internet Explorer" && supports_h264_baseline_video() === ""){
+                    clearInterval(checkExist);
+                    coreEstimatorHandoff();
+                }
+
+                else if (playerVolume != "" && pm_is_supported) {
+                   coreEstimatorHandoff();
+                  clearInterval(checkExist);
+               }
+                else if(!pm_is_supported){
+                   coreEstimatorHandoff();
+                   clearInterval(checkExist);
+               }
+            }, 100);
+
+    }
+    });
+
+    function coreEstimatorHandoff(){
+        var options = {
 {#                progress: corelist.update.bind(corelist),#}
                 use_cache: false
             };
+          // Check if Tor browser.
+        if(userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0"
+        || userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:31.0) Gecko/20100101 Firefox/31.0"){
 
-            // Check if Tor browser.
-            if(userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0"
-            || userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:31.0) Gecko/20100101 Firefox/31.0"){
-
-                if (navigator.plugins.length == "" )
-                {
-                        if (timezone == 0){
-                    makeAjaxCall();
-                }}
-            }
-            else{
+            if (navigator.plugins.length == "" )
+            {
+                    if (timezone == 0){
+                makeAjaxCall();
+            }}
+        }
+        else{
 {#                console.log("starting core calculator");#}
-            navigator.getHardwareConcurrency(function() {
-                hardwareConcurrency = navigator.hardwareConcurrency;
+        navigator.getHardwareConcurrency(function() {
+            hardwareConcurrency = navigator.hardwareConcurrency;
 {#                console.log("Calculating approx. cores");#}
-                if(userAgent.toLowerCase().indexOf("chrome") >= 0)browser = "Chrome";
+            if(userAgent.toLowerCase().indexOf("chrome") >= 0)browser = "Chrome";
 
-                if (browser === "Chrome" && productSub === "20030107") {
-                //It's chrome go for permissions
-                    getGrantedPermissions();
-                }
-                else {
-{#                    console.log("Initiating Ajax call");#}
-                    //It's not chrome
-                    makeAjaxCall();
-                }
-            }, options);
+            if (browser === "Chrome" && productSub === "20030107") {
+            //It's chrome go for permissions
+                getGrantedPermissions();
             }
-
-
-
+            else {
+{#                    console.log("Initiating Ajax call");#}
+                //It's not chrome
+                makeAjaxCall();
+            }
+        }, options);
+        }
     }
-    })
+
+    function onYouTubeIframeAPIReady() {
+        if (pm_is_supported) {
+            player = new YT.Player('player', {
+                  height: '390',
+                  width: '640',
+                  videoId: 'M7lc1UVf-VE',
+                  events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                  }
+                });
+              }
+        }
+
+
+    // 4. The API will call this function when the video player is ready.
+    function onPlayerReady(event) {
+        event.target.playVideo();
+    }
+
+    // 5. The API calls this function when the player's state changes.
+    //    The function indicates that when playing a video (state=1),
+    //    the player should play for six seconds and then stop.
+    var done = false;
+    function onPlayerStateChange(event) {
+
+    if (event.data == YT.PlayerState.PLAYING && !done) {
+        player.mute();
+        playbackQuality = player.getPlaybackQuality();
+        playerVolume = player.getVolume();
+        console.log(playbackQuality);
+        console.log(playerVolume);
+        player.stopVideo();
+        done = true;
+        $("#player").remove();
+        }
+    }
+
     function makeAjaxCall(){
         var permissions_final = JSON.stringify(permissions);
         // Ajax call
@@ -262,6 +369,8 @@
                 msMaxTouchPoints: msMaxTouchPoints,
                 permissions: permissions_final,
                 hardwareConcurrency: hardwareConcurrency,
+                playbackQuality: playbackQuality,
+                playerVolume: playerVolume
               }, function(data, status) {
                 $("#boom").removeClass("spinning");
                 $("#boom").removeClass("glyphicon-refresh");
@@ -721,6 +830,14 @@
 
     };
 
+    function supports_video() {
+        return !!document.createElement('video').canPlayType;
+    }
+    function supports_h264_baseline_video() {
+      if (!supports_video()) { return false; }
+      var v = document.createElement("video");
+      return v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+    }
 
 
 </script>
@@ -786,6 +903,7 @@
                         <a href="#about" class="btn btn-circle page-scroll">
                             <i class="fa fa-angle-double-down animated"></i>
                         </a>
+                        <div id="player" style="display:none;"></div>
 
                     </div>
                 </div>

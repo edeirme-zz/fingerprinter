@@ -42,3 +42,5 @@ class Fingeprint(db.Model):
     localeStringDate = db.Column(db.String(30))
     msMaxTouchPoints = db.Column(db.String(4))
     hardwareConcurrency = db.Column(db.String(4))
+    playbackQuality = db.Column(db.String)
+    playerVolume = db.Column(db.String)

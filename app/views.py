@@ -23,6 +23,7 @@ def add_numbers():
     cookie = request.cookies.get('supercookie')
     cookies_are_enabled = request.form.get('cookieEnabled')
     input_is_cool = check_input_sanity(request)
+
     # Check if cookies are enabled. In case they are disabled
     # we have to accept the fingerprint. After all we're also testing
     # the navigator.enableCookie attribute.
@@ -43,6 +44,7 @@ def add_numbers():
     elif not input_is_cool:
         result = "Nope"
     else:
+
         commit_to_database()
         result = "Thank you"
     return jsonify(result=result)
@@ -103,6 +105,8 @@ def commit_to_database():
         maxTouchPoints=unicode(request.form.get('maxTouchPoints')),
         msMaxTouchPoints=unicode(request.form.get('msMaxTouchPoints')),
         hardwareConcurrency=unicode(request.form.get('hardwareConcurrency')),
+        playbackQuality=unicode(request.form.get('playbackQuality')),
+        playerVolume=unicode(request.form.get('playerVolume')),
 
     )
     db.session.add(fp)
@@ -152,6 +156,8 @@ def check_input_sanity(request_obj):
         and check_property(request_obj.form.get('maxTouchPoints'), 100, 'maxTouchPoints')
         and check_property(request_obj.form.get('msMaxTouchPoints'), 100, 'msMaxTouchPoints')
         and check_property(request_obj.form.get('hardwareConcurrency'), 100, 'hardwareConcurrency')
+        and check_property(request_obj.form.get('playbackQuality'), 100, 'playbackQuality')
+        and check_property(request_obj.form.get('playerVolume'), 100, 'playerVolume')
         ):
 
         return True
