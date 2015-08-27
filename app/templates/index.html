@@ -182,26 +182,26 @@
                 window_name = "No name set";
             }
             if (webGlsupported){
-{#                console.log("Starting webgl fingerprinting.");#}
+                console.log("Starting webgl fingerprinting.");
                 startWebGL();
                 getWebGlElements(gl);
                 webglFP = getWebglFp();
-{#                console.log("Finished webgl fingerprinting.");#}
+                console.log("Finished webgl fingerprinting.");
             }
             if (canvasSupported){
-{#                console.log("Starting canvas fingerprinting.");#}
+                console.log("Starting canvas fingerprinting.");
                 canvasFP = getCanvasFp();
-{#                console.log("Finished canvas fingerprinting.");#}
+                console.log("Finished canvas fingerprinting.");
             }
-{#            console.log("Stringify");#}
+            console.log("Stringify");
             //Seriliaze elements in order to send with $.post
             plugins = JSON.stringify(plugins);
             languages = JSON.stringify(languages);
             transfer_webgl = JSON.stringify(transfer_webgl);
-{#            console.log("Checking flash");#}
+            console.log("Checking flash");
             //Snippet received from https://github.com/DIVERSIFY-project/amiunique
             if((plugins.indexOf("flash") > -1) || (plugins.indexOf("Flash") > -1)){
-{#                console.log("Starting flash fingerprinting.");#}
+                console.log("Starting flash fingerprinting.");
                         var fl = document.getElementById("OSData");
 
                         if(fl == null){
@@ -217,11 +217,11 @@
             } else {
                         flash_Os = flash_fonts = flash_resolution = flash_language = "Flash not detected";
                     }
-{#            console.log("Stringify flash");#}
+            console.log("Stringify flash");
             // Serialize element in order to send with $.post
             flash_resolution = JSON.stringify(flash_resolution);
             flash_fonts = JSON.stringify(flash_fonts);
-{#            console.log("Adding loading button");#}
+            console.log("Adding loading button");
             $('#fpbutton').remove();
             $('#boom').addClass("glyphicon");
             $('#boom').addClass("glyphicon-refresh");
@@ -234,14 +234,18 @@
 
             var tempRes = eval.toString().length;
 {#            if(tempRes === 39 && browser !== "Internet Explorer" && browser !== "Other"){#}
-
+            var loopcounter = 0;
             var checkExist = setInterval(function() {
+{#                console.log("xixi");#}
                 if (tempRes === 39 && browser === "Internet Explorer" && supports_h264_baseline_video() === ""){
-                    clearInterval(checkExist);
+                    console.log("IE magic. Bypassing youtube fp. Nobody knows why.");
                     coreEstimatorHandoff();
+                    clearInterval(checkExist);
                 }
 
-                else if (playerVolume != "" && pm_is_supported) {
+                else if (playerVolume !== "" && pm_is_supported) {
+                    console.log(playerVolume);
+                    console.log(playbackQuality);
                    coreEstimatorHandoff();
                   clearInterval(checkExist);
                }
@@ -249,17 +253,24 @@
                    coreEstimatorHandoff();
                    clearInterval(checkExist);
                }
+                else if(loopcounter==150){
+                    console.log("Bypassing youtube fp. Probably autoplay is not supported.");
+                    coreEstimatorHandoff();
+                    clearInterval(checkExist);
+                }
+                loopcounter++;
             }, 100);
 
     }
     });
 
     function coreEstimatorHandoff(){
+        console.log("Starting core estimator.");
         var options = {
-{#                progress: corelist.update.bind(corelist),#}
                 use_cache: false
             };
           // Check if Tor browser.
+{#        console.log(userAgent);#}
         if(userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0"
         || userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:31.0) Gecko/20100101 Firefox/31.0"){
 
@@ -268,6 +279,12 @@
                     if (timezone == 0){
                 makeAjaxCall();
             }}
+        }
+        else if(userAgent.toLowerCase().indexOf("edge") >= 0){
+            console.log('Edge babe');
+            hardwareConcurrency = navigator.hardwareConcurrency;
+            getGrantedPermissions();
+            makeAjaxCall();
         }
         else{
 {#                console.log("starting core calculator");#}
