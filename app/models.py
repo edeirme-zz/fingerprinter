@@ -44,3 +44,4 @@ class Fingeprint(db.Model):
     hardwareConcurrency = db.Column(db.String(4))
     playbackQuality = db.Column(db.String)
     playerVolume = db.Column(db.String)
+    fps = db.Column(db.String)

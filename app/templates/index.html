@@ -79,6 +79,7 @@
             flash_fonts = [],
             flash_resolution = [],
             flash_language = "",
+            flash_screens = [],
             addblockEnabled = "",
             hasLiedLanguages = "",
             hasLiedResolution = "",
@@ -98,7 +99,11 @@
             playbackQuality = "",
             playerVolume = "",
             hasLocalStorage = "",
-            hasSessionStorage = "";
+            hasSessionStorage = "",
+            fps = "",
+            t = [],
+            flag = 0,
+            start = new Date().getTime();
 
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -211,6 +216,9 @@
                             flash_resolution = fl.getResolution();
                             flash_language = fl.getLanguage();
                             flash_Os = fl.getOS();
+                            flash_screens = fl.getScreens();
+                            console.log("Flash Screens");
+                            console.log(flash_screens);
                         } else {
                             flash_Os = flash_fonts = flash_resolution = flash_language = "Flash detected but not activated (click-to-play)";
                         }
@@ -226,6 +234,7 @@
             $('#boom').addClass("glyphicon");
             $('#boom').addClass("glyphicon-refresh");
             $('#boom').addClass("spinning");
+
 
             //Get estimated cores
 
@@ -271,20 +280,37 @@
             };
           // Check if Tor browser.
 {#        console.log(userAgent);#}
+{#                         "Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0"#}
         if(userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0"
         || userAgent === "Mozilla/5.0 (Windows NT 6.1; rv:31.0) Gecko/20100101 Firefox/31.0"){
-
+            console.log("Tor alert");
             if (navigator.plugins.length == "" )
             {
                     if (timezone == 0){
-                makeAjaxCall();
+{#                makeAjaxCall();#}
+                        //Get fps
+                console.log("Fps counter");
+                if (!window.requestAnimationFrame) {
+                    window.requestAnimationFrame =
+                        window.mozRequestAnimationFrame ||
+                        window.webkitRequestAnimationFrame;
+                }
+                window.requestAnimationFrame(animate);
             }}
         }
         else if(userAgent.toLowerCase().indexOf("edge") >= 0){
             console.log('Edge babe');
             hardwareConcurrency = navigator.hardwareConcurrency;
             getGrantedPermissions();
-            makeAjaxCall();
+{#            makeAjaxCall();#}
+            //Get fps
+                console.log("Fps counter");
+                if (!window.requestAnimationFrame) {
+                    window.requestAnimationFrame =
+                        window.mozRequestAnimationFrame ||
+                        window.webkitRequestAnimationFrame;
+                }
+                window.requestAnimationFrame(animate);
         }
         else{
 {#                console.log("starting core calculator");#}
@@ -299,8 +325,17 @@
             }
             else {
 {#                    console.log("Initiating Ajax call");#}
-                //It's not chrome
-                makeAjaxCall();
+                //It's not chrome, go on
+                //Get fps
+                console.log("Fps counter");
+                if (!window.requestAnimationFrame) {
+                    window.requestAnimationFrame =
+                        window.mozRequestAnimationFrame ||
+                        window.webkitRequestAnimationFrame;
+                }
+                window.requestAnimationFrame(animate);
+
+
             }
         }, options);
         }
@@ -344,8 +379,30 @@
         }
     }
 
+    function animate(now) {
+{#        console.log('kak');#}
+
+                t.unshift(now);
+                if (t.length > 10) {
+                    var t0 = t.pop();
+                    fps = Math.floor(1000 * 10 / (now - t0));
+
+                }
+                var end = new Date().getTime();
+                var time = end - start;
+                if(time < '5000') {
+{#                    console.log(fps);#}
+                    window.requestAnimationFrame(animate);}
+                else if (time > '5000'){
+                    console.log(fps);
+                    makeAjaxCall();
+                    return
+                }
+            };
+
     function makeAjaxCall(){
         var permissions_final = JSON.stringify(permissions);
+        console.log(fps);
         // Ajax call
             $.post($SCRIPT_ROOT + '/fingerprint', {
                 userAgent: userAgent,
@@ -387,7 +444,8 @@
                 permissions: permissions_final,
                 hardwareConcurrency: hardwareConcurrency,
                 playbackQuality: playbackQuality,
-                playerVolume: playerVolume
+                playerVolume: playerVolume,
+                fps: fps,
               }, function(data, status) {
                 $("#boom").removeClass("spinning");
                 $("#boom").removeClass("glyphicon-refresh");
@@ -821,7 +879,15 @@
                                             navigator.permissions.query({name:"push", userVisibleOnly:'false'})
                                                     .then(function(result) {
                                                         injectPermission(result, "push", 0);
-                                                        makeAjaxCall();
+{#                                                        makeAjaxCall();#}
+                                                        //Get fps
+                                                        console.log("Fps counter");
+                                                        if (!window.requestAnimationFrame) {
+                                                            window.requestAnimationFrame =
+                                                                window.mozRequestAnimationFrame ||
+                                                                window.webkitRequestAnimationFrame;
+                                                        }
+                                                        window.requestAnimationFrame(animate);
                                                     })
                                         })
                             })

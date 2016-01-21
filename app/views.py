@@ -107,6 +107,7 @@ def commit_to_database():
         hardwareConcurrency=unicode(request.form.get('hardwareConcurrency')),
         playbackQuality=unicode(request.form.get('playbackQuality')),
         playerVolume=unicode(request.form.get('playerVolume')),
+        fps=unicode(request.form.get('fps')),
 
     )
     db.session.add(fp)
@@ -158,6 +159,7 @@ def check_input_sanity(request_obj):
         and check_property(request_obj.form.get('hardwareConcurrency'), 100, 'hardwareConcurrency')
         and check_property(request_obj.form.get('playbackQuality'), 100, 'playbackQuality')
         and check_property(request_obj.form.get('playerVolume'), 100, 'playerVolume')
+        and check_property(request_obj.form.get('fps'), 3, 'fps')
         ):
 
         return True

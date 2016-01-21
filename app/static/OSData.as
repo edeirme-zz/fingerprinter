@@ -2,6 +2,7 @@
 package {
 
     import flash.display.Sprite;
+    import flash.display.Screen;
     import flash.text.Font;
     import flash.text.FontType;
     import flash.text.FontStyle;
@@ -16,6 +17,7 @@ package {
  		 ExternalInterface.addCallback('getOS', this.getOS);
 		 ExternalInterface.addCallback('getResolution', this.getResolution);
 		 ExternalInterface.addCallback('getLanguage', this.getLanguage);
+         ExternalInterface.addCallback('getScreens', this.getScreens);
 
  		 if  (ExternalInterface.available) {
                 	ExternalInterface.call("isConnected");
@@ -53,5 +55,10 @@ package {
 		{
 			return Capabilities.language;
 		}
+
+        public function getScreens():Array
+        {
+            return Screen.screens;
+        }
     }
 }
