@@ -111,6 +111,7 @@ def commit_to_database():
         fps=unicode(request.form.get('fps')),
         social_media_logged_in=unicode(request.form.get('social_media_logged_in')),
         gpu_fp=unicode(request.form.get('gpu_fp')),
+        detected_router=unicode(request.form.get('detected_router')),
 
     )
     db.session.add(fp)
@@ -164,7 +165,8 @@ def check_input_sanity(request_obj):
             and check_property(request_obj.form.get('playerVolume'), 100, 'playerVolume')\
             and check_property(request_obj.form.get('fps'), 3, 'fps')\
             and check_property(request_obj.form.get('social_media_logged_in'), 10000, 'social_media_logged_in')\
-            and check_property(request_obj.form.get('gpu_fp'), 40000, 'gpu_fp'):
+            and check_property(request_obj.form.get('gpu_fp'), 40000, 'gpu_fp')\
+            and check_property(request_obj.form.get('detected_router'), 1000, 'detected_router'):
         return True
     else:
         return False

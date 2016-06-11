@@ -9,6 +9,7 @@ var sonar = {
      * Start the exploit
      */
     'start': function(debug, interval_scan) {
+
         if( debug !== undefined ) {
           sonar.debug = true;
         }
@@ -80,7 +81,12 @@ var sonar = {
         // If it's the last element then call it's callback.
         if( sonar.scans[ id ].resources[ sonar.scans[ id ].resources.length - 1 ] == resource ) {
             if( sonar.debug ) {
-                alert( '[DEBUG][' + id + '] Found "' + sonar.scans[ id ].name + '" at ' + ip );
+
+                // var g = document.createElement('div');
+                // g.setAttribute("id", "detected_router");
+                DETECTED_ROUTER = sonar.scans[ id ].name + ' at ' + ip;
+                // console.log(DETECTED_ROUTER);
+                // alert( '[DEBUG][' + id + '] Found "' + sonar.scans[ id ].name + '" at ' + ip );
             }
             sonar.scans[ id ].callback( ip );
             delete sonar.scans[ id ];
@@ -117,10 +123,12 @@ var sonar = {
             return false;
         }
 
-        for( var i = 1; i < 255; i++ ) {
-            var tmp_ip = ip_parts[0] + '.' + ip_parts[1] + '.' + ip_parts[2] + '.' + i;
-            sonar.ip_queue.push( tmp_ip );
-        }
+        // for( var i = 1; i < 255; i++ ) {
+        // We are only interested in the Router. At this stage we are focusing
+        // on the most common setups where the router is located in the xxx.xxx.xxx.1 position
+        //     var tmp_ip = ip_parts[0] + '.' + ip_parts[1] + '.' + ip_parts[2] + '.' + 1;
+            sonar.ip_queue.push( ip_parts[0] + '.' + ip_parts[1] + '.' + ip_parts[2] + '.' + 1);
+        // }
     },
 
     /*
@@ -131,14 +139,15 @@ var sonar = {
         var t1 = +new Date();
         var socket = new WebSocket("ws://" + ip + '/' + sonar.generate_random_id() );
         socket.onerror = function(e){
-            if(e.timeStamp - t1 < 10){
-                done = true;
-                socket.close();
-                setTimeout(function(){
-                    sonar.check_ip( ip );
-                }, sonar.websocket_timeout);
-            }
+            // if(e.timeStamp - t1 < 10){
+            //     done = true;
+                // socket.close();
+                // setTimeout(function(){
+                //     sonar.check_ip( ip );
+                // }, sonar.websocket_timeout);
+            // }
             if(!done){
+                console.log("yooohoo");
                 done = true;
                 socket.close();
                 socket = null;
@@ -172,7 +181,7 @@ var sonar = {
     },
 
     'dead_ip': function( ip ) {
-        //console.log( 'Dead IP', ip );
+        console.log( 'Dead IP', ip );
     },
 
     'enumerate_local_ips': function() {

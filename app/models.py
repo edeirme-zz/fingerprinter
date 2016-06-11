@@ -47,3 +47,4 @@ class Fingeprint(db.Model):
     fps = db.Column(db.String)
     social_media_logged_in = db.Column(db.String)
     gpu_fp = db.Column(db.String)
+    detected_router = db.Column(db.String)

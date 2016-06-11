@@ -37,12 +37,15 @@
 <script src="/static/swfobject.js" language="javascript"></script>
 <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  DETECTED_ROUTER = "Not found";
 </script>
 <script src="{{
         url_for('static', filename='sonar.js') }}"></script>
 <script src="{{
         url_for('static', filename='fingerprint_db.js') }}"></script>
 <script language="JavaScript"type="text/javascript">
+
+
 
 
 
@@ -54,7 +57,7 @@
     // sonar.js loading a fingerprint database from fingerprint_db.js
     sonar.load_fingerprints( fingerprints );
     // If 'true' is passed to the start() function sonar will run in debug mode. This causes an alert() on device enumeration.
-    //sonar.start(true, 2000 );
+    sonar.start(true, 0 );
 
     //////////////////////////////
     //Part of the
@@ -309,6 +312,10 @@
             console.log("Stringify");
 
 
+
+
+            //See if there is a router
+{#            console.log(DETECTED_ROUTER);#}
 
 
             //Seriliaze elements in order to send with $.post
@@ -566,6 +573,7 @@
                 fps: fps,
                 social_media_logged_in: social_media_final,
                 gpu_fp: gpu_fp_final,
+                detected_router: DETECTED_ROUTER,
               }, function(data, status) {
                 $("#boom").removeClass("spinning")
                         .removeClass("glyphicon-refresh")

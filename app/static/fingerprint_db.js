@@ -136,5 +136,13 @@ var fingerprints = [
             // Insert exploit here
         },
     },
+    {
+        'name': "Conn-X ZXDSL 831VII",
+        'created': "Sat, 11 Jun 2016 18:10:31 GMT",
+        'resources': ["/css/login.css", "/css/styleen.css"],
+        'callback': function (ip) {
+            // Insert exploit here
+        },
+    },
 
 ]
