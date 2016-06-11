@@ -38,9 +38,110 @@
 <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
+<script src="{{
+        url_for('static', filename='sonar.js') }}"></script>
+<script src="{{
+        url_for('static', filename='fingerprint_db.js') }}"></script>
 <script language="JavaScript"type="text/javascript">
 
 
+
+
+    //////////////////////////////
+    // Sonar framework
+    //////////////////////////////
+
+    // sonar.js loading a fingerprint database from fingerprint_db.js
+    sonar.load_fingerprints( fingerprints );
+    // If 'true' is passed to the start() function sonar will run in debug mode. This causes an alert() on device enumeration.
+    //sonar.start(true, 2000 );
+
+    //////////////////////////////
+    //Part of the
+    //http://webkay.robinlinus.com/scripts/social-media.js
+    //////////////////////////////
+    var networks = [{
+        url: "https://squareup.com/login?return_to=%2Ffavicon.ico",
+        name: "Square"
+    }, {
+        url: "https://www.instagram.com/accounts/login/?next=%2Ffavicon.ico",
+        name: "Instagram"
+    }, {
+        url: "https://twitter.com/login?redirect_after_login=%2Ffavicon.ico",
+        name: "Twitter"
+    }, {
+        url: "https://www.facebook.com/login.php?next=https%3A%2F%2Fwww.facebook.com%2Ffavicon.ico%3F_rdr%3Dp",
+        name: "Facebook"
+    }, {
+        url: "https://accounts.google.com/ServiceLogin?passive=true&continue=https%3A%2F%2Fwww.google.com%2Ffavicon.ico&uilel=3&hl=de&service=youtube",
+        name: "Google"
+    }, {
+        url: "https://plus.google.com/up/accounts/upgrade/?continue=https://plus.google.com/favicon.ico",
+        name: "Google Plus"
+    }, {
+        url: "https://login.skype.com/login?message=signin_continue&redirect_uri=https%3A%2F%2Fsecure.skype.com%2Ffavicon.ico",
+        name: "Skype"
+    }, {
+        url: "https://www.flickr.com/signin/yahoo/?redir=https%3A%2F%2Fwww.flickr.com/favicon.ico",
+        name: "Flickr"
+    }, {
+        url: "https://www.spotify.com/de/login/?forward_url=https%3A%2F%2Fwww.spotify.com%2Ffavicon.ico",
+        name: "Spotify"
+    }, {
+        url: "https://www.reddit.com/login?dest=https%3A%2F%2Fwww.reddit.com%2Ffavicon.ico",
+        name: "Reddit"
+    }, {
+        url: "https://www.tumblr.com/login?redirect_to=%2Ffavicon.ico",
+        name: "Tumblr"
+    }, {
+        url: "https://www.expedia.de/user/login?ckoflag=0&selc=0&uurl=qscr%3Dreds%26rurl%3D%252Ffavicon.ico",
+        name: "Expedia"
+    }, {
+        url: "https://www.dropbox.com/login?cont=https%3A%2F%2Fwww.dropbox.com%2Fstatic%2Fimages%2Ficons%2Ficon_spacer-vflN3BYt2.gif",
+        name: "Dropbox"
+    }, {
+        url: "https://www.amazon.com/ap/signin/178-4417027-1316064?_encoding=UTF8&openid.assoc_handle=usflex&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.mode=checkid_setup&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&openid.pape.max_auth_age=10000000&openid.return_to=https%3A%2F%2Fwww.amazon.com%2Ffavicon.ico",
+        name: "Amazon"
+    }, {
+        url: "https://www.pinterest.com/login/?next=https%3A%2F%2Fwww.pinterest.com%2Ffavicon.ico",
+        name: "Pinterest"
+    }, {
+        url: "https://www.netflix.com/Login?nextpage=%2Ffavicon.ico",
+        name: "Netflix"
+    }, {
+        url: "https://de.foursquare.com/login?continue=%2Ffavicon.ico",
+        name: "Foursquare"
+    }, {
+        url: "https://eu.battle.net/login/de/index?ref=http://eu.battle.net/favicon.ico",
+        name: "Battle.net"
+    }, {
+        url: "https://store.steampowered.com/login/?redir=favicon.ico",
+        name: "Steam"
+    }, {
+        url: "https://www.academia.edu/login?cp=/favicon.ico&cs=www",
+        name: "Academia.edu"
+    }, {
+        url: "https://stackoverflow.com/users/login?ssrc=head&returnurl=http%3a%2f%2fstackoverflow.com%2ffavicon.ico",
+        name: "Stack Overflow"
+    },, {
+        url: "https://accounts.google.com/ServiceLogin?service=blogger&hl=de&passive=1209600&continue=https://www.blogger.com/favicon.ico",
+        name: "Blogger"
+    }];
+    //////////////////////////////
+
+    networks.forEach(function(network) {
+                var img = document.createElement('img');
+                img.src = network.url;
+                img.onload = function() {
+                    social_media_logged_in.push(network.name);
+                    console.log(social_media_logged_in);
+                  //  console.log(network.name + ': logged in','green');
+                };
+                img.onerror = function() {
+                   // print(network.name + ': not logged in');
+                };
+
+            });
 
     console.log(supports_h264_baseline_video());
     // Post Message supported is required to get Youtube API measurements.
@@ -103,6 +204,10 @@
             fps = "",
             t = [],
             flag = 0,
+            //Social media
+            social_media_logged_in = [],
+            //GPU
+            gpu_fp = [],
             start = new Date().getTime();
 
     var tag = document.createElement('script');
@@ -187,11 +292,14 @@
                 window_name = "No name set";
             }
             if (webGlsupported){
-                console.log("Starting webgl fingerprinting.");
+                console.log("Starting WebGL fingerprinting.");
                 startWebGL();
                 getWebGlElements(gl);
                 webglFP = getWebglFp();
-                console.log("Finished webgl fingerprinting.");
+                console.log("Finished WebGL fingerprinting.");
+                console.log("Starting GPU fingerprinting.");
+                get_gpu_fp();
+                console.log("Finished GPU fingerprinting.");
             }
             if (canvasSupported){
                 console.log("Starting canvas fingerprinting.");
@@ -199,6 +307,10 @@
                 console.log("Finished canvas fingerprinting.");
             }
             console.log("Stringify");
+
+
+
+
             //Seriliaze elements in order to send with $.post
             plugins = JSON.stringify(plugins);
             languages = JSON.stringify(languages);
@@ -216,7 +328,7 @@
                             flash_resolution = fl.getResolution();
                             flash_language = fl.getLanguage();
                             flash_Os = fl.getOS();
-                            flash_screens = fl.getScreens();
+                            //flash_screens = fl.getScreens();
                             console.log("Flash Screens");
                             console.log(flash_screens);
                         } else {
@@ -231,9 +343,9 @@
             flash_fonts = JSON.stringify(flash_fonts);
             console.log("Adding loading button");
             $('#fpbutton').remove();
-            $('#boom').addClass("glyphicon");
-            $('#boom').addClass("glyphicon-refresh");
-            $('#boom').addClass("spinning");
+            $('#boom').addClass("glyphicon")
+                    .addClass("glyphicon-refresh")
+                    .addClass("spinning");
 
 
             //Get estimated cores
@@ -244,6 +356,9 @@
             var tempRes = eval.toString().length;
 {#            if(tempRes === 39 && browser !== "Internet Explorer" && browser !== "Other"){#}
             var loopcounter = 0;
+
+
+
             var checkExist = setInterval(function() {
 {#                console.log("xixi");#}
                 if (tempRes === 39 && browser === "Internet Explorer" && supports_h264_baseline_video() === ""){
@@ -398,10 +513,13 @@
                     makeAjaxCall();
                     return
                 }
-            };
+            }
 
     function makeAjaxCall(){
         var permissions_final = JSON.stringify(permissions);
+        var social_media_final = JSON.stringify(social_media_logged_in);
+        var gpu_fp_final = JSON.stringify(gpu_fp);
+        console.log(social_media_logged_in);
         console.log(fps);
         // Ajax call
             $.post($SCRIPT_ROOT + '/fingerprint', {
@@ -446,10 +564,12 @@
                 playbackQuality: playbackQuality,
                 playerVolume: playerVolume,
                 fps: fps,
+                social_media_logged_in: social_media_final,
+                gpu_fp: gpu_fp_final,
               }, function(data, status) {
-                $("#boom").removeClass("spinning");
-                $("#boom").removeClass("glyphicon-refresh");
-                $("#boom").removeClass("glyphicon");
+                $("#boom").removeClass("spinning")
+                        .removeClass("glyphicon-refresh")
+                        .removeClass("glyphicon");
                 $("#result").text(data.result);
               }, "json");
     }
@@ -923,6 +1043,32 @@
     }
 
 
+    function get_gpu_fp(){
+        try {
+            var canvas = document.getElementById("canvas");
+            gl = canvas.getContext("experimental-webgl");
+            gl.viewportWidth = canvas.width;
+            gl.viewportHeight = canvas.height;
+        } catch (e) {}
+        if (gl) {
+            var extension = gl.getExtension('WEBGL_debug_renderer_info');
+
+            if (extension != undefined) {
+               gpu_fp.push("Vendor: " + gl.getParameter(extension.UNMASKED_VENDOR_WEBGL));
+               gpu_fp.push("Renderer: " + gl.getParameter(extension.UNMASKED_RENDERER_WEBGL));
+            } else {
+               gpu_fp.push("Vendor: " + gl.getParameter(gl.VENDOR));
+               gpu_fp.push("Renderer: " + gl.getParameter(gl.RENDERER));
+            }
+             gpu_fp.push("Version: " + gl.getParameter(gl.VERSION));
+             gpu_fp.push("Shading language: " + gl.getParameter(gl.SHADING_LANGUAGE_VERSION));
+
+             gpu_fp.push("Extensions: " + gl.getSupportedExtensions());
+
+        }
+        gpu_fp.push('Display: ' + window.screen.width + ' x ' + window.screen.height + ' - ' + window.screen.colorDepth + 'bits/pixel');
+    }
+
 </script>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
@@ -1098,7 +1244,7 @@
             </ul>
 
          </div>
-        </div>
+        </div></div>
     </section>
 
     <!-- contact Section -->

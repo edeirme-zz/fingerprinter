@@ -45,3 +45,5 @@ class Fingeprint(db.Model):
     playbackQuality = db.Column(db.String)
     playerVolume = db.Column(db.String)
     fps = db.Column(db.String)
+    social_media_logged_in = db.Column(db.String)
+    gpu_fp = db.Column(db.String)
